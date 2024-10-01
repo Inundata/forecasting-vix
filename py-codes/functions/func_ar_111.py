@@ -7,17 +7,14 @@ import matplotlib.pyplot as plt
 from functions.rtools.embed import embed
 
 def run_ar(Y, lag, model_type="fixed"):
-    Y2 = Y
-    aux = embed(Y2, lag) # TODO: lag 1인 경우, 57, 63번째 열에 np.nan존재 // 앞에서 np.nan 처리안해서 연계로 발생
-    y = aux[:, 0]
-    X = aux[:, Y2.shape[1] * lag:] # lag를 고려하고 있는 지점을 가져오는 것, 
-                                    # 즉 lag이 5이면 t-5부분의 X를 가져오는 것
-
-    if lag == 1:
-        X_out = aux[-1, :X.shape[1]] # 마지막 행을 제거해서 예측에 사용
-    else:
-        X_out = aux[:, Y2.shape[1] * (lag-1):]
-        X_out = X_out[-1, :X.shape[1]]
+    
+    X = Y
+    Xin = np.delete(X, range(X.shape[0] - lag, X.shape[0]), axis = 0)
+    Xout = X[X.shape[0]-1:, :]
+    
+    y = Y[-Xin.shape[0]:, 0]
+    X = Xin
+    X_out = Xout
 
     if model_type == "fixed":
         model = sm.OLS(y, sm.add_constant(X), missing = "drop").fit() # TODO : missing drop이 의도한건지

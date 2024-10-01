@@ -1,15 +1,15 @@
 ### Codes for TABLE2 & TABLE 3 ###
 ### FIGURE 3 Included
 
-##setwd("C:/Users/PC/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecast-vix")
-##setwd("E:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecast-vix")
-setwd("D:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecast-vix")
+setwd("C:/Users/PC/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
+##setwd("E:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
+##setwd("D:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
 library(readxl)
 
 npred = 3240
 
 ## Random Walk Model
-source("r-codes/functions/func-rw_1.R")
+source("r-codes/functions_corrected/func-rw_1.R")
 
 data = read_excel("data/dataset_HARX(14).xlsx", na = ("remove"))
 data = as.matrix(data[,-1])
@@ -25,7 +25,7 @@ rw22=rw.rolling.window(Y1,npred,1,22)
 
 
 ## HAR & HARX Model
-source("r-codes/functions/func-ar_111.R")
+source("r-codes/functions_corrected/func-ar_111.R")
 
 harx1 = ar.rolling.window(Y1,npred,1,1,type="fixed")
 harx5 = ar.rolling.window(Y1,npred,1,5,type="fixed")
@@ -43,7 +43,7 @@ har22 = ar.rolling.window(Y2,npred,1,22,type="fixed")
 
 
 ## ARX Model
-source("r-codes/functions/func-ar_112.R")
+source("r-codes/functions_corrected/func-ar_112.R")
 
 Y3 = cbind(Y1[,1],Y1[,6:19])
 
