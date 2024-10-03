@@ -326,8 +326,8 @@ for lag in [1, 5, 10, 22][:]:
         RF_betas.append(RF_beta)
         XGB_betas.append(XGB_beta)
 
-        if i%20 == 0:
-            print(f"Forecast #{i}-th sample is finished.")
+        if (pred_idx+1)%20 == 0:
+            print(f"Forecast #{pred_idx}-th sample is finished.")
 
     # to DataFrame
     RF_prediction = pd.concat(RF_prediction).to_frame()
