@@ -309,7 +309,7 @@ for lag in [1, 5, 10, 22][:]:
 
     RF_betas = []
     XGB_betas = []
-    for i in range(npred, 0, -1)[:2]:
+    for i in range(npred, 0, -1)[:]:
         
         date_window = date[(npred - i):(data.shape[0] - i)]
 
