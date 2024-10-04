@@ -32,10 +32,10 @@ rf.rolling.window=function(Y,nprev,indice=1,lag=1,selected){
   
   real=Y[,indice]
   plot(real,type="l")
-  lines(c(rep(NA,length(real)-nprev),save.pred),col="red")
+  lines(c(rep(NA,length(real)-npred+lag-1),save.pred),col="red")
   
-  rmse=sqrt(mean((tail(real,nprev)-save.pred)^2))
-  mae=mean(abs(tail(real,nprev)-save.pred))
+  rmse=sqrt(mean((tail(real,npred-lag+1)-save.pred)^2))
+  mae=mean(abs(tail(real,npred-lag+1)-save.pred))
   errors=c("rmse"=rmse,"mae"=mae)
   
   return(list("pred"=save.pred,"errors"=errors,"save.importance"=save.importance))

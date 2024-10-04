@@ -55,12 +55,13 @@ lasso.rolling.window=function(Y,npred,indice=1,lag=1,alpha=1,type="lasso"){
   
   real=Y[,indice]
   plot(real,type="l")
-  lines(c(rep(NA,length(real)-npred),save.pred),col="red")
+  lines(c(rep(NA,length(real)-npred+lag-1),save.pred),col="red")
   
-  rmse=sqrt(mean((tail(real,npred)-save.pred)^2))
-  mae=mean(abs(tail(real,npred)-save.pred))
+  rmse=sqrt(mean((tail(real,npred-lag+1)-save.pred)^2))
+  mae=mean(abs(tail(real,npred-lag+1)-save.pred))
   errors=c("rmse"=rmse,"mae"=mae)
   
   return(list("pred"=save.pred,"coef"=save.coef,"errors"=errors))
+  
 }
 
