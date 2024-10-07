@@ -210,7 +210,8 @@ def run_pl_rf(date_window, date, lag, df, linear_variables, nonlinear_variables,
     X_nonlinear_train = X_train.loc[:, nonlinear_variables]
 
     # Set the window for test
-    X_test_window = date_window[-lag]
+    # X_test_window = date_window[-lag]
+    X_test_window = date_window[-1]
     y_test_window = date[(np.where(date == pd.to_datetime(X_test_window))[0] + lag)[0]]
 
     X_linear_test = tmp_data.loc[X_test_window:X_test_window, linear_variables]
