@@ -301,7 +301,7 @@ XGB_rmse_dict = {}
 RF_mae_dict = {}
 XGB_mae_dict = {}
 
-for lag in [1, 5, 10, 22][:2]:
+for lag in [1, 5, 10, 22][2:]:
 
     print("{0:=^30}".format(f" Start {lag}-ahead forecast "))
 
@@ -367,6 +367,6 @@ for lag in [1, 5, 10, 22][:2]:
             , "RF_betas" : RF_betas_dict, "XGB_betas" : XGB_betas_dict}
 
     # Save the result to pickle
-    with open(f"{result_path}/vix-forecast-py_241003.pkl", "wb") as f:
+    with open(f"{result_path}/vix-forecast-py_241003_home.pkl", "wb") as f:
         pickle.dump(result_dict, f)
 
