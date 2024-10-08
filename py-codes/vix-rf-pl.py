@@ -41,6 +41,8 @@ result_path = str(Path.cwd().parent / "result")
 # %%
 # Line 7~16
 df = pd.read_excel(f"{data_path}/dataset_HARX(14).xlsx")
+RAW_DF = df.copy()
+RAW_DF.set_index(["Code"], inplace = True)
 df = df.iloc[66:, :]
 date = df["Code"].to_numpy() # The date
 df.set_index(["Code"], inplace = True)
@@ -342,7 +344,7 @@ for lag in [1, 5, 10, 22][:2]:
     XGB_prediction.columns = [XGB_prediction.columns[0] + f"_lag{lag}"]
 
     # get the real value to calculate errors
-    real_value = df[[target_variable]].loc[RF_prediction.index]
+    real_value = RAW_DF[[target_variable]].loc[RF_prediction.index]
 
     # merge the prediction
     result = reduce(lambda l, r: pd.merge(l, r, left_index = True, right_index = True)
