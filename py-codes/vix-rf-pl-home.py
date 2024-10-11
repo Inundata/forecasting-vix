@@ -41,6 +41,8 @@ result_path = str(Path.cwd().parent / "result")
 # %%
 # Line 7~16
 df = pd.read_excel(f"{data_path}/dataset_HARX(14).xlsx")
+RAW_DF = df.copy()
+RAW_DF.set_index(["Code"], inplace = True)
 df = df.iloc[66:, :]
 date = df["Code"].to_numpy() # The date
 df.set_index(["Code"], inplace = True)
@@ -227,15 +229,22 @@ def run_pl_rf(date_window, date, lag, df, linear_variables, nonlinear_variables,
         
         tmp_X_linear = X_linear_train.iloc[:, idx:idx+1]
 
+        # update for subsampling
+        tmp_params_for_rf = params_for_rf.copy()
+        tmp_params_for_rf.update({"max_samples" : np.round(len(X_linear_train)**(-1/2), 2)})
+
+        tmp_params_for_xgb = params_for_xgb.copy()
+        tmp_params_for_xgb.update({"subsample": np.round(len(X_linear_train)**(-1/2), 2)})
+
         # Random Forest
-        RF_for_residual_X_linear = RandomForestRegressor(**params_for_rf)
+        RF_for_residual_X_linear = RandomForestRegressor(**tmp_params_for_rf)
         RF_for_residual_X_linear.fit(X = X_nonlinear_train, y = tmp_X_linear.values.ravel())
 
         tmp_RF_X_linear_residual = tmp_X_linear.iloc[:, 0] - RF_for_residual_X_linear.predict(X_nonlinear_train)
         RF_X_linear_residual.append(tmp_RF_X_linear_residual)
 
         # XGBoost
-        XGB_for_residual_X_linear = xgboost.XGBRegressor(**params_for_xgb)
+        XGB_for_residual_X_linear = xgboost.XGBRegressor(**tmp_params_for_xgb)
         XGB_for_residual_X_linear.fit(X = X_nonlinear_train, y = tmp_X_linear.values.ravel())
 
         tmp_XGB_X_linear_residual = tmp_X_linear.iloc[:, 0] - XGB_for_residual_X_linear.predict(X_nonlinear_train)
@@ -246,12 +255,12 @@ def run_pl_rf(date_window, date, lag, df, linear_variables, nonlinear_variables,
 
     ## 2. extract y residual
     # Random Forest
-    RF_for_residual_y = RandomForestRegressor(**params_for_rf)
+    RF_for_residual_y = RandomForestRegressor(**tmp_params_for_rf)
     RF_for_residual_y.fit(X = X_nonlinear_train, y = y_train.values.ravel())
     RF_y_residual = y_train - RF_for_residual_y.predict(X_nonlinear_train)
 
     # XGBoost
-    XGB_for_residual_y = xgboost.XGBRegressor(**params_for_xgb)
+    XGB_for_residual_y = xgboost.XGBRegressor(**tmp_params_for_xgb)
     XGB_for_residual_y.fit(X = X_nonlinear_train, y = y_train.values.ravel())
     XGB_y_residual = y_train - XGB_for_residual_y.predict(X_nonlinear_train)
 
@@ -269,10 +278,10 @@ def run_pl_rf(date_window, date, lag, df, linear_variables, nonlinear_variables,
     RF_residual = y_train.ravel() - (X_linear_train @ RF_beta).ravel()
     XGB_residual = y_train.ravel() - (X_linear_train @ XGB_beta).ravel()
 
-    RF_ = RandomForestRegressor(**params_for_rf)
+    RF_ = RandomForestRegressor(**tmp_params_for_rf)
     RF_.fit(X = X_nonlinear_train, y = RF_residual)
 
-    XGB_ = xgboost.XGBRegressor(**params_for_xgb)
+    XGB_ = xgboost.XGBRegressor(**tmp_params_for_xgb)
     XGB_.fit(X = X_nonlinear_train, y = XGB_residual)
 
     ## 5. Get the prediction
@@ -343,7 +352,7 @@ for lag in [1, 5, 10, 22][2:]:
     XGB_prediction.columns = [XGB_prediction.columns[0] + f"_lag{lag}"]
 
     # get the real value to calculate errors
-    real_value = df[[target_variable]].loc[RF_prediction.index]
+    real_value = RAW_DF[[target_variable]].loc[RF_prediction.index]
 
     # merge the prediction
     result = reduce(lambda l, r: pd.merge(l, r, left_index = True, right_index = True)
@@ -368,6 +377,6 @@ for lag in [1, 5, 10, 22][2:]:
             , "RF_betas" : RF_betas_dict, "XGB_betas" : XGB_betas_dict}
 
     # Save the result to pickle
-    with open(f"{result_path}/vix-forecast-py_241003_home.pkl", "wb") as f:
+    with open(f"{result_path}/vix-forecast-py_241003_home_subsample.pkl", "wb") as f:
         pickle.dump(result_dict, f)
 
