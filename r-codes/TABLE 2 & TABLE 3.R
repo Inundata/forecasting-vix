@@ -1,7 +1,7 @@
 ### Codes for TABLE2 & TABLE 3 ###
 ### FIGURE 3 Included
-##setwd("C:/Users/PC/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
-setwd("E:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
+setwd("C:/Users/PC/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
+##setwd("E:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
 ##setwd("D:/OneDrive/Ph.D/98. Paper/1. vix-forecast/forecasting-vix")
 library(readxl)
 
@@ -15,7 +15,7 @@ df = data
 data = as.matrix(data[,-1])
 data = data[-(1:66),] 
   
-Y1 = data[1:5740,] # 위의 코드까지 결합하면 여기는 1990-04-05~2013-01-15만 사용한다는 것임
+Y1 = data[1:5740,] # 위?? ?湄????? ?????玖? ?????? 1990-04-05~2013-01-15?? ?????磯募? ????
 
 rw1=rw.rolling.window(Y1,npred,1,1)
 rw5=rw.rolling.window(Y1,npred,1,5)
